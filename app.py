@@ -22,26 +22,20 @@ class BaseScreen(QWidget):
 class SwimDiaryApp(QMainWindow):
     def __init__(self):
         super().__init__()
-
         self.setWindowTitle("Swim Diary")
         self.setGeometry(100, 100, 800, 600)
         self.setWindowIcon(QtGui.QIcon("wave_icon.png"))
-
         self.setStyleSheet("QMainWindow::title {background-color: black; color: white;}")
         self.showMaximized()
         self.completed_lessons_label = QLabel(self)
         self.notes_count_label = QLabel(self)
-
         self.init_lessons_database()
         self.init_completed_lessons_database()
         self.init_notes_database() 
-
         self.stacked_widget = QStackedWidget(self)
         self.setCentralWidget(self.stacked_widget)
-
         self.set_dark_theme()
         self.setWindowIcon(QIcon('wave_icon.png'))
-
         self.create_main_screen()
         self.create_completed_lessons_screen()
         self.create_profile_screen()
@@ -49,16 +43,13 @@ class SwimDiaryApp(QMainWindow):
         self.create_notes_screen() 
         self.create_note_details_screen() 
         self.create_add_note_screen()
-
         self.create_navigation_toolbar()
-
         self.stacked_widget.setCurrentIndex(0)
         
     def show_notes_screen(self):
         self.stacked_widget.setCurrentIndex(4)
     def show_add_note_screen(self):
         self.stacked_widget.setCurrentIndex(6) 
-
 
     def set_dark_theme(self):
         self.setStyleSheet("""
@@ -162,7 +153,6 @@ class SwimDiaryApp(QMainWindow):
         completed_lessons_count = self.get_completed_lessons_count()
         total_lessons_count = self.get_total_lessons_count()
         self.completed_lessons_label.setText(f"Количество пройденных уроков: {completed_lessons_count}/{total_lessons_count}")
-
         notes_count = self.get_notes_count()
         self.notes_count_label.setText(f"Количество заметок: {notes_count}")
 
@@ -172,10 +162,8 @@ class SwimDiaryApp(QMainWindow):
         if not db.open():
             print("Cannot open database")
             return False
-
         query = QSqlQuery()
         query.exec_("CREATE TABLE IF NOT EXISTS lessons (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT)")
-
         query.exec_("SELECT COUNT(*) FROM lessons")
         query.next()
         if query.value(0) == 0:
@@ -205,7 +193,6 @@ class SwimDiaryApp(QMainWindow):
             ("Техника плавания на короткие дистанции", "Тренировки на улучшение скорости на коротких дистанциях."),
             ("Завершающие уроки и оценка прогресса", "Подведение итогов обучения, оценка прогресса и рекомендации для дальнейших тренировок.")
             ]
-
             for lesson in lessons_data:
                 query.exec_("INSERT INTO lessons (name, description) VALUES ('{}', '{}')".format(lesson[0], lesson[1]))
 
@@ -215,7 +202,6 @@ class SwimDiaryApp(QMainWindow):
         if not db.open():
             print("Cannot open completed_lessons database")
             return False
-
         query = QSqlQuery()
         query.exec_("CREATE TABLE IF NOT EXISTS completed_lessons (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)")
 
@@ -225,7 +211,6 @@ class SwimDiaryApp(QMainWindow):
         if not db.open():
             print("Cannot open notes database")
             return False
-
         query = QSqlQuery()
         query.exec_("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT)")
 
@@ -242,7 +227,6 @@ class SwimDiaryApp(QMainWindow):
 
     def show_lesson_details(self, item):
         lesson_name = item.text()
-
         if self.is_lesson_completed(lesson_name):
             self.show_completed_lesson_details(lesson_name)
         else:
@@ -258,6 +242,7 @@ class SwimDiaryApp(QMainWindow):
         self.complete_lesson_button.setEnabled(False)
 
         self.stacked_widget.setCurrentIndex(3)
+
     def show_incomplete_lesson_details(self, lesson_name):
         self.lesson_name_label.setText(lesson_name)
         query = QSqlQuery(f"SELECT description FROM lessons WHERE name = '{lesson_name}'")
@@ -383,7 +368,6 @@ class SwimDiaryApp(QMainWindow):
         """)
         notes_screen.layout.addWidget(add_note_button)
         self.stacked_widget.addWidget(notes_screen)
-
 
     def get_notes_count(self):
         query = QSqlQuery("SELECT COUNT(*) FROM notes")
